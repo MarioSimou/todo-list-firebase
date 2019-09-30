@@ -1,5 +1,4 @@
-const firebase = require('firebase')
-require('firebase/firestore')
+import firebase from 'firebase'
 
 firebase.initializeApp({
   apiKey: process.env.REACT_APP_API_KEY,
@@ -11,3 +10,5 @@ firebase.initializeApp({
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 })
+
+export const firestore = firebase.firestore()

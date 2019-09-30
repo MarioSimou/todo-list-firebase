@@ -1,12 +1,15 @@
 :root {
   font-size: 18px;
-  font-family: 'Roboto'
+  font-family: 'Roboto';
 }
 
 * {
-  font-size: 1rem;
+  /* font-size: 1rem; */
   box-sizing: border-box;
-  font-size: 1rem;
   padding: 0;
   margin: 0;
+}
+
+.ql-container {
+  height: calc(100% - 42px);
 }

@@ -1,7 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom'
+import { ThemeProvider} from '@material-ui/styles'
 import App from './components/App'
 import './utils/configFirestore'
+import theme from './utils/theme'
 import './assets/css/main.css'
 
-render( <App/>, document.getElementById('app'))
+render(
+    <ThemeProvider theme={theme}>
+        <App/>
+    </ThemeProvider>, document.getElementById('app'))
