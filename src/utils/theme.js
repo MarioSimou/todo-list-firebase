@@ -8,9 +8,9 @@ const primary = {
 }
 
 const secondary = {
-    light: '#fff',
-    main: '#fff',
-    dark: '#fff',
+    light: '#F5F5F5',
+    main: '#7A7A7A',
+    dark: '#242424',
     contrastText: '#fff',
 }
 
@@ -23,9 +23,9 @@ const error = {
 
 export default createMuiTheme({
     palette : {
-        ...primary,
-        ...secondary,
-        ...error,
+        primary,
+        secondary,
+        error,
     },
     typography: {
         fontFamily: [

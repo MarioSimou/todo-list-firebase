@@ -3,6 +3,7 @@ import ReactQuill from "react-quill";
 import { makeStyles } from "@material-ui/styles";
 import Icon from '@material-ui/core/Icon'
 import BorderColorOutlinedIcon from '@material-ui/icons/BorderColorOutlined';
+import { firestore } from '../utils/configFirestore'
 import "react-quill/dist/quill.snow.css";
 
 const modules = {
@@ -41,21 +42,24 @@ const formats = [
   "video"
 ];
 
-const Editor = ({ noteTitle, setNoteTitle, ...other }) => {
-  const [html, setHtml] = React.useState("");
-  const onChangeHtml = html => setHtml(html);
-  const onChangeNote = e => setNoteTitle(e.target.value)
+const Editor = ({ note, setNote, tasks, setTasks, ...other }) => {
+  const onChangeNoteBody = body => setNote({ ...note, body})
+  const onChangeNoteTitle = e => setNote({ ...note, title:e.target.value })
+  const onBlurEditor = () => {
+    firestore.collection('tasks').doc(note.id).set(note)
+    setTasks({ ...tasks, [note.id]:note})
+  }
   const classes = useStyles()
 
   return (
-    <div {...other}>
+    <div {...other} onBlur={onBlurEditor}>
       <div className={classes.header}>
         <Icon className={classes.iconWrapper}><BorderColorOutlinedIcon className={classes.icon}/></Icon>
-        <input type="text" value={noteTitle} className={classes.noteTitle} onChange={onChangeNote} />
+        <input type="text" value={note.title} className={classes.noteTitle} onChange={onChangeNoteTitle} />
       </div>
       <ReactQuill
-      value={html}
-      onChange={onChangeHtml}
+      value={note.body}
+      onChange={onChangeNoteBody}
       modules={modules}
       formats={formats}
       placeholder={"Add your task"}/>

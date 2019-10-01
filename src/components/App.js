@@ -6,15 +6,13 @@ import {firestore} from '../utils/configFirestore'
 
 const App = props => {
   const classes = useStyles()
-  const [noteTitle,setNoteTitle] = React.useState('')
-  const [noteId,setNoteId] = React.useState('')
+  const [note, setNote] = React.useState({title: '',body: '', id: ''})
+  const [tasks,setTasks] = React.useState({})
 
-  console.log(noteTitle)
-  console.log(noteId)
   return (
     <div className={classes.root}>
-      <Sidebar className={classes.sidebar} setNoteTitle={setNoteTitle} setNoteId={setNoteId}/>
-      {noteTitle && <Editor className={classes.editor} noteTitle={noteTitle} setNoteTitle={setNoteTitle}/>}
+      <Sidebar className={classes.sidebar} note={note} setNote={setNote} tasks={tasks} setTasks={setTasks}/>
+      {Boolean(note.id) && <Editor note={note} setNote={setNote} className={classes.editor} tasks={tasks} setTasks={setTasks}/>}
     </div>
   )
 }

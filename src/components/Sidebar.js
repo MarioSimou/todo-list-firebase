@@ -2,38 +2,40 @@ import React from 'react'
 import {Button} from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import {firestore} from '../utils/configFirestore'
+import SidebarItem from './SidebarItem'
 
-const Sidebar = ({setNoteTitle, setNoteId, ...other}) => {
+const Sidebar = ({note, setNote, tasks, setTasks, ...other}) => {
+  const [hasNote, setHasNote] = React.useState(false)
   const classes = useStyles()
-  const [hasNote,setHasNote] = React.useState(false)
-  const [title,setTitle] = React.useState('') 
-  const onClickNewNote = () => setHasNote(!hasNote) 
-  const onChangeTitle = e => setTitle(e.target.value)
+  const onClickAddNote = () => {setHasNote(!hasNote);setNote({title: '',body: '', id: ''})} 
+  const onChangeNoteTitle = e => setNote({ ...note, title: e.target.value })
   const onClickSubmitTitle = () => {
-    if(!title){
+    if(!note.title){
       window.alert('Fill a note name')
       return
     }
 
-    firestore.collection('tasks').add({title, body: ''})
+    firestore.collection('tasks').add({title: note.title})
     .then(doc => { 
-      console.log(doc)
-      setNoteTitle(title)
-      setHasNote(!hasNote)
-      setNoteId(doc.id)
+      setNote({ ...note, id:doc.id})
+      setTasks({ ...tasks, [doc.id]:{ ...note, id:doc.id}})
+      setHasNote(false)
     })
     .catch(e => window.alert(e))
   }
 
+  React.useEffect( () => {
+    firestore.collection("tasks").get().then(snapshot => {
+      setTasks(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data()})).reduce((acc,task) => ({ ...acc, [task.id]:task}), {}))
+    })
+  }, [])
+
   return (
     <div {...other}>
-      <Button className={classes.addNote} onClick={onClickNewNote}>NEW NOTE</Button>
-      { hasNote && 
-        <>
-         <input type="text" value={title} onChange={onChangeTitle} className={classes.noteTitle} fullWidth/>
-         <Button onClick={onClickSubmitTitle} className={classes.submit} fullWidth>Submit</Button>
-        </>
-      }
+      <Button className={classes.addNote} onClick={onClickAddNote}>NEW NOTE</Button>
+      {hasNote && <input type="text" value={note.title} onChange={onChangeNoteTitle} className={classes.noteTitle}/>}
+      {hasNote && <Button onClick={onClickSubmitTitle} className={classes.submit} fullWidth>Submit</Button>}
+      {Object.values(tasks).map(task => <SidebarItem key={task.id} {...task} setNote={setNote}/>)}
     </div>
   )
 }
