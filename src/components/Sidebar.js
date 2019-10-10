@@ -1,6 +1,6 @@
 import React from "react";
 import Task from './Task'
-import { Button, Fade, FormControl } from "@material-ui/core";
+import { Button, Collapse, FormControl } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from 'react-redux'
 import { firestore } from '../utils/configFirebase'
@@ -9,19 +9,25 @@ import { addTask } from '../actions'
 const Sidebar = props => {
   const classes = useStyles();
   const [showTask, setShowTask] = React.useState(false);
-  const [taskName, setTaskName] = React.useState("");
+  const [taskTitle, setTaskTitle] = React.useState("");
   const onClickShowTask = () => setShowTask(!showTask);
-  const onChangeTaskName = e => setTaskName(e.target.value);
+  const onChangeTaskName = e => setTaskTitle(e.target.value);
+  const onDoubleClick = e => {
+    const id = e.currentTarget.dataset.id
+    props.setSelectedTask(props.tasks.find(task => task.id === id ))
+  }
+
   const onSubmitTask = () => {
-    if(!taskName) {
+    if(!taskTitle) {
       window.alert('Please submit a task name')
       return
     }
 
-    firestore.collection("tasks").add({name: taskName})
+    firestore.collection("tasks").add({title: taskTitle})
     .then( doc => doc.get())
-    .then( snapshot => props.addTask({id: snapshot.id, ...snapshot.data()}))
+    .then( snapshot => props.setSelectedTask({id: snapshot.id, ...snapshot.data()}))
     .then(setShowTask(false))
+    .then(setTaskTitle(''))
     .catch(e => window.alert(JSON.stringify(e)))
   };
 
@@ -37,9 +43,9 @@ const Sidebar = props => {
         >
           ADD TASK
         </Button>
-        <Fade in={showTask}>
-          <div className={classes.taskNameWrapper}>
-            <input type="text" value={taskName} onChange={onChangeTaskName} placeholder="Your task" className={classes.taskNameInput} />
+        <Collapse in={showTask}>
+          <div>
+            <input type="text" value={taskTitle} onChange={onChangeTaskName} placeholder="Your task" className={classes.titleInput} />
             <Button
               className={classes.btn}
               variant="contained"
@@ -49,23 +55,26 @@ const Sidebar = props => {
               Submit
             </Button>
           </div>
-        </Fade>
+        </Collapse>
       </FormControl>
       <div>
-        {props.tasks.map(task => <Task key={task.id} task={task}/>)}
+        {props.tasks.map(task => <Task key={task.id} {...task} selected={task.id===props.selectedTaskId} onDoubleClick={onDoubleClick} />)}
       </div>
     </div>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  root: {
+    overflowY: 'scroll',
+    height: '100%',
+  },
   btn: {
     borderRadius: "0",
-    height: "42px",
+    height: theme.spacing(5),
     width: "100%"
   },
-  taskNameInput: {
+  titleInput: {
     width: "100%",
     borderRadius: 0,
     margin: 0,
