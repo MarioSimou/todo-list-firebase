@@ -1,34 +1,40 @@
 import React from "react";
-import { Grid } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import Editor from "./Editor";
 import Sidebar from "./Sidebar";
-import { makeStyles } from "@material-ui/styles";
-import "../assets/css/main.css";
+import makeStyles from "@material-ui/styles/makeStyles";
 import { firestore } from "../utils/configFirebase";
-import { loadTasks } from "../actions";
+import { addTask, updateTask, removeTask } from "../actions";
 import { connect } from "react-redux";
-import {
-    handleOnSnapshotEvent,
-    doTaskMapping
-} from '../utils'
+import { handleOnSnapshotEvent, doTaskMapping } from "../utils";
+import "../assets/css/main.css";
 
-const App = ({ loadTasks, tasks }) => {
+const initState = {
+  id: "",
+  title: "",
+  body: ""
+};
+
+const App = ({ addTask, updateTask, removeTask, tasks }) => {
   const classes = useStyles();
-  const [selectedTask, setSelectedTask] = React.useState({});
+  const [selectedTask, setSelectedTask] = React.useState(initState);
+  const reducers = { addTask, updateTask, removeTask };
 
-  firestore.collection("tasks").onSnapshot(handleOnSnapshotEvent(tasks, loadTasks, doTaskMapping));
+  firestore
+    .collection("tasks")
+    .onSnapshot(handleOnSnapshotEvent(tasks, reducers, doTaskMapping));
 
   return (
     <div className={classes.root}>
       <Grid container className={classes.gridContainer}>
-        <Grid item xs={3} className={classes.sidebar}>
+        <Grid item xs={12} md={3} className={classes.sidebar}>
           <Sidebar
             selectedTaskId={selectedTask.id}
             setSelectedTask={setSelectedTask}
           />
         </Grid>
-        <Grid item xs={9} className={classes.editor}>
-          <Editor {...selectedTask} />
+        <Grid item xs={12}umd={9} className={classes.editor}>
+          <Editor {...selectedTask} setSelectedTask={setSelectedTask} />
         </Grid>
       </Grid>
     </div>
@@ -52,5 +58,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { loadTasks }
+  { addTask, updateTask, removeTask }
 )(App);

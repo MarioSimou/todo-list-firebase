@@ -9,10 +9,9 @@ const tasksReducer = (state = {} ,action) => {
             delete state[action.payload]
             return { ...state }
         case t.UPDATE_TASK:
-            state[action.payload.id] = action.payload
-            return state
+            return { ...state, [action.payload.id]:action.payload}
         case t.LOAD_TASKS:
-            return action.payload.reduce((acc, task) => ({ ...acc, [task.id]:task }), {})
+            return { ...state, ...action.payload.reduce((acc, task) => ({ ...acc, [task.id]:task }), {})}
         default:
             return state
     }

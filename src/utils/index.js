@@ -1,28 +1,33 @@
 export const doTaskMapping = (task, arr) =>
   arr.reduce((acc, [k, fn]) => ({ ...acc, [k]: fn(task) }), {});
 
-  export const handleOnSnapshotEvent = (tasks, loadTasks, fn) => snapshot => {
+export const handleOnSnapshotEvent = (tasks, reducers, fn) => snapshot => {
   const changes = snapshot.docChanges();
-  const l = changes.reduce((acc, change) => {
-    console.log(change)
+  for (const change of changes) {
     switch (change.type) {
       case "added":
-        if (Object.values(tasks).length === 0) {
-          acc = [
-            ...acc,
-            fn(change, [
-              ["id", c => c.doc.id],
-              ["title", c => c.doc.data().title || ""],
-              ["body", c => c.doc.data().body || ""]
-            ])
-          ];
+        if (!tasks.find(task => task.id === change.doc.id)) {
+          reducers.addTask(fn(change, [
+            ["id", c => c.doc.id],
+            ["title", c => c.doc.data().title || ""],
+            ["body", c => c.doc.data().body || ""]
+          ]));
         }
         break;
+      case "modified":
+        reducers.updateTask(fn(change, [
+          ["id", c => c.doc.id],
+          ["title", c => c.doc.data().title || ""],
+          ["body", c => c.doc.data().body || ""]
+        ]));
+        break
+      case "removed":
+        reducers.removeTask(change.doc.id)
+        break
       default:
         break;
     }
-    return acc;
-  }, []);
-
-  if(l.length > 0) loadTasks(l)
+  }
 };
+
+export const htmlToString = str => str.replace(/(<.+?>)(.+?)(<.+?>$)/,'$2')

@@ -6,13 +6,12 @@ const primary = {
 }
 const secondary = {
     light: '#f5f5f5',
-    main: '#ababab',
+    main: '#dcdcdc',
     contrastText: '#fff',
-
 }
 
 const error = {
-    main: '#da283f'
+    main: '#F08080'
 }
 
 export default createMuiTheme({

@@ -4,7 +4,6 @@ import { Button, Collapse, FormControl } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from 'react-redux'
 import { firestore } from '../utils/configFirebase'
-import { addTask } from '../actions'
 
 const Sidebar = props => {
   const classes = useStyles();
@@ -23,9 +22,9 @@ const Sidebar = props => {
       return
     }
 
-    firestore.collection("tasks").add({title: taskTitle})
+    firestore.collection("tasks").add({title: taskTitle, body: ''})
     .then( doc => doc.get())
-    .then( snapshot => props.setSelectedTask({id: snapshot.id, ...snapshot.data()}))
+    .then(snapshot => props.setSelectedTask({id: snapshot.id, ...snapshot.data()}))
     .then(setShowTask(false))
     .then(setTaskTitle(''))
     .catch(e => window.alert(JSON.stringify(e)))
@@ -88,4 +87,4 @@ const mapStateToProps = state => {
   return { tasks: Object.values(state.tasksReducer) }
 } 
 
-export default connect(mapStateToProps, { addTask })(Sidebar);
+export default connect(mapStateToProps)(Sidebar);
