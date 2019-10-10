@@ -33,7 +33,7 @@ const App = ({ addTask, updateTask, removeTask, tasks }) => {
             setSelectedTask={setSelectedTask}
           />
         </Grid>
-        <Grid item xs={12}umd={9} className={classes.editor}>
+        <Grid item xs={12} md={9} className={classes.editor}>
           <Editor {...selectedTask} setSelectedTask={setSelectedTask} />
         </Grid>
       </Grid>
