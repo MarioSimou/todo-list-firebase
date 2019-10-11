@@ -30,4 +30,4 @@ export const handleOnSnapshotEvent = (tasks, reducers, fn) => snapshot => {
   }
 };
 
-export const htmlToString = str => str.replace(/(<.+?>)(.+?)(<.+?>$)/,'$2')
+export const htmlToString = str => str.replace(/(<.+?>|<.+?>)/g,'')

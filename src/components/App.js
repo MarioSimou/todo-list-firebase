@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Grid from "@material-ui/core/Grid";
-import Editor from "./Editor";
-import Sidebar from "./Sidebar";
 import makeStyles from "@material-ui/styles/makeStyles";
+import Loader from './Loader'
 import { firestore } from "../utils/configFirebase";
 import { addTask, updateTask, removeTask } from "../actions";
 import { connect } from "react-redux";
 import { handleOnSnapshotEvent, doTaskMapping } from "../utils";
 import "../assets/css/main.css";
+
+const Editor = React.lazy(() => import('./Editor'))
+const Sidebar = React.lazy(() => import('./Sidebar'))
 
 const initState = {
   id: "",
@@ -28,13 +30,18 @@ const App = ({ addTask, updateTask, removeTask, tasks }) => {
     <div className={classes.root}>
       <Grid container className={classes.gridContainer}>
         <Grid item xs={12} md={3} className={classes.sidebar}>
-          <Sidebar
-            selectedTaskId={selectedTask.id}
-            setSelectedTask={setSelectedTask}
-          />
+          <Suspense fallback={<Loader/>}>
+            <Sidebar
+              selectedTaskId={selectedTask.id}
+              setSelectedTask={setSelectedTask}
+            />
+          </Suspense>
+          
         </Grid>
         <Grid item xs={12} md={9} className={classes.editor}>
-          <Editor {...selectedTask} setSelectedTask={setSelectedTask} />
+          <Suspense fallback={<Loader/>}>
+            <Editor {...selectedTask} setSelectedTask={setSelectedTask} />          
+          </Suspense>
         </Grid>
       </Grid>
     </div>
@@ -43,13 +50,14 @@ const App = ({ addTask, updateTask, removeTask, tasks }) => {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    height: "100vh"
+    height: "100vh",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   gridContainer: {
     height: "100%"
-  },
-  sidebar: {},
-  editor: {}
+  }
 }));
 
 const mapStateToProps = state => {

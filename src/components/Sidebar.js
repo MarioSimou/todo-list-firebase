@@ -1,9 +1,12 @@
-import React from "react";
-import Task from './Task'
-import { Button, Collapse, FormControl } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import { connect } from 'react-redux'
-import { firestore } from '../utils/configFirebase'
+import React, { Suspense } from "react";
+import Button from "@material-ui/core/Button";
+import Collapse from "@material-ui/core/Collapse";
+import FormControl from "@material-ui/core/FormControl";
+import Loader from "./Loader";
+import makeStyles from "@material-ui/styles/makeStyles";
+import { connect } from "react-redux";
+import { firestore } from "../utils/configFirebase";
+const Task = React.lazy(() => import("./Task"));
 
 const Sidebar = props => {
   const classes = useStyles();
@@ -12,22 +15,26 @@ const Sidebar = props => {
   const onClickShowTask = () => setShowTask(!showTask);
   const onChangeTaskName = e => setTaskTitle(e.target.value);
   const onDoubleClick = e => {
-    const id = e.currentTarget.dataset.id
-    props.setSelectedTask(props.tasks.find(task => task.id === id ))
-  }
+    const id = e.currentTarget.dataset.id;
+    props.setSelectedTask(props.tasks.find(task => task.id === id));
+  };
 
   const onSubmitTask = () => {
-    if(!taskTitle) {
-      window.alert('Please submit a task name')
-      return
+    if (!taskTitle) {
+      window.alert("Please submit a task name");
+      return;
     }
 
-    firestore.collection("tasks").add({title: taskTitle, body: ''})
-    .then( doc => doc.get())
-    .then(snapshot => props.setSelectedTask({id: snapshot.id, ...snapshot.data()}))
-    .then(setShowTask(false))
-    .then(setTaskTitle(''))
-    .catch(e => window.alert(JSON.stringify(e)))
+    firestore
+      .collection("tasks")
+      .add({ title: taskTitle, body: "" })
+      .then(doc => doc.get())
+      .then(snapshot =>
+        props.setSelectedTask({ id: snapshot.id, ...snapshot.data() })
+      )
+      .then(setShowTask(false))
+      .then(setTaskTitle(""))
+      .catch(e => window.alert(JSON.stringify(e)));
   };
 
   return (
@@ -44,7 +51,13 @@ const Sidebar = props => {
         </Button>
         <Collapse in={showTask}>
           <div>
-            <input type="text" value={taskTitle} onChange={onChangeTaskName} placeholder="Your task" className={classes.titleInput} />
+            <input
+              type="text"
+              value={taskTitle}
+              onChange={onChangeTaskName}
+              placeholder="Your task"
+              className={classes.titleInput}
+            />
             <Button
               className={classes.btn}
               variant="contained"
@@ -57,7 +70,15 @@ const Sidebar = props => {
         </Collapse>
       </FormControl>
       <div>
-        {props.tasks.map(task => <Task key={task.id} {...task} selected={task.id===props.selectedTaskId} onDoubleClick={onDoubleClick} />)}
+        {props.tasks.map(task => (
+          <Suspense key={task.id} fallback={<Loader />}>
+            <Task
+              {...task}
+              selected={task.id === props.selectedTaskId}
+              onDoubleClick={onDoubleClick}
+            />
+          </Suspense>
+        ))}
       </div>
     </div>
   );
@@ -65,8 +86,8 @@ const Sidebar = props => {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    overflowY: 'scroll',
-    height: '100%',
+    overflowY: "scroll",
+    height: "100%"
   },
   btn: {
     borderRadius: "0",
@@ -78,13 +99,13 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 0,
     margin: 0,
     border: 0,
-    padding: '8px 14px',
+    padding: "8px 14px",
     height: "42px"
   }
 }));
 
 const mapStateToProps = state => {
-  return { tasks: Object.values(state.tasksReducer) }
-} 
+  return { tasks: Object.values(state.tasksReducer) };
+};
 
 export default connect(mapStateToProps)(Sidebar);
