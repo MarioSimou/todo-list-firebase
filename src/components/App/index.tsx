@@ -1,6 +1,9 @@
 import * as React from "react"
 import { ChakraProvider, theme } from "@chakra-ui/react"
 import { FirebaseOptions, initializeApp } from 'firebase/app'
+import { HashRouter, Route } from 'react-router-dom'
+import Home from '../pages/Home'
+import Navbar from "../shared/Navbar"
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -16,7 +19,10 @@ initializeApp(firebaseConfig, 'todo-list')
 
 const App = () => (
   <ChakraProvider theme={theme}>
-    <div>hello world</div>
+    <HashRouter>
+      <Navbar/>
+      <Route path="/home" component={Home} exact/>
+    </HashRouter>
   </ChakraProvider>
 )
 
