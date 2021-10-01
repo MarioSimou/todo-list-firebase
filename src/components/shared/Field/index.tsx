@@ -12,7 +12,7 @@ type Props<T> = {
     value: string
     Input?: React.ElementType
     InputProps?: UnknownMap
-    onBlur: (e: React.ChangeEvent<T>) => void
+    onBlur: (e: React.MouseEvent<T>) => void
     onChange: (e: React.ChangeEvent<T>) => void
 }
 
@@ -25,13 +25,15 @@ function Field<T>({
     disabled =false,
     required = false,
     Input = ChakraInput,
-    InputProps = {type: "text"}
+    InputProps = {type: "text"},
+    onChange,
+    onBlur,
 }: Props<T>): React.ReactElement {
 
     return (
         <FormControl id={id} isInvalid={Boolean(error && touched)} isRequired={required} isDisabled={disabled}>
             <FormLabel>{label}</FormLabel>
-            <Input variant="filled" value={value} {...InputProps}/>
+            <Input variant="filled" value={value} onChange={onChange} onBlur={onBlur} {...InputProps}/>
             <FormErrorMessage>{error}</FormErrorMessage>
         </FormControl>
     )
