@@ -1,3 +1,5 @@
+import { FullMetadata} from 'firebase/storage'
+
 export type TodoItemT = {
     id: string
     title: string
@@ -13,3 +15,7 @@ export type FieldOptions = {
 }
 
 export type FieldsMap = {[k in string]: FieldOptions}
+
+export type ImageT = {
+    url: string
+} & FullMetadata

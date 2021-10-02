@@ -1,6 +1,6 @@
 import React from 'react'
 import TodoList from './TodoList'
-import {Box, Flex, VStack, Button} from '@chakra-ui/react'
+import {Box, Flex, VStack, Button, Heading} from '@chakra-ui/react'
 import AddTodoItemDrawer from './AddTodoItemDrawer'
 import UpdateTodoItemDrawer from './UpdateTodoItemDrawer'
 import {AddIcon} from '@chakra-ui/icons'
@@ -33,7 +33,8 @@ const Home = () => {
             </Flex>
             <AddTodoItemDrawer isOpen={isAddTodoItemDrawerOpen} onClose={closeAddTodoItemDrawer} addItem={addItem}/>
             {selectedItem && <UpdateTodoItemDrawer isOpen={isUpdateTodoItemDrawerOpen} onClose={onCloseUpdateTodoItem} updateItem={updateItem} item={selectedItem}/>}
-            <VStack p="2rem">
+            <VStack p="2rem" spacing="2rem">
+                <Heading>Todo Items List</Heading>
                 <TodoList items={items} deleteItem={deleteItem} updateItem={onClickUpdateTodoItem}/>
             </VStack>
         </Box>

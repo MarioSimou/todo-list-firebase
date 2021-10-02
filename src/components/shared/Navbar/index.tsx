@@ -11,8 +11,9 @@ const Link: React.FC<LinkProps> = (props) => {
 const Navbar = () => {
     return (
         <Flex p="1rem" alignItems="center" justifyContent="flex-end" bg="blackAlpha.800">
-            <Flex>
+            <Flex gridColumnGap="1rem">
                 <Link to="/home">Home</Link>
+                <Link to="/photos">Photos</Link>
             </Flex>
         </Flex>
     )

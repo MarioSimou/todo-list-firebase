@@ -3,6 +3,7 @@ import { ChakraProvider, theme } from "@chakra-ui/react"
 import { FirebaseOptions, initializeApp } from 'firebase/app'
 import { HashRouter, Route } from 'react-router-dom'
 import Home from '../pages/Home'
+import Photos from '../pages/Photos'
 import Navbar from "../shared/Navbar"
 
 const firebaseConfig: FirebaseOptions = {
@@ -22,6 +23,7 @@ const App = () => (
     <HashRouter>
       <Navbar/>
       <Route path="/home" component={Home} exact/>
+      <Route path="/photos" component={Photos} exact/>
     </HashRouter>
   </ChakraProvider>
 )

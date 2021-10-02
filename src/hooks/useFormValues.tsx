@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SetStateAction } from 'react'
 import { ObjectSchema } from 'yup'
 import { ObjectShape } from 'yup/lib/object'
 import { FieldsMap } from '../types'
@@ -11,10 +11,11 @@ type FormValuesResult = {
     setError: (name: string, error: string) => void
     enableTouched: (name: string) => void
     resetFormValues: () => void
+    setFormValues: React.Dispatch<SetStateAction<FieldsMap>>
     onSubmit: (cb: (formValues: FieldsMap) => void) => Function
 } 
 
-const validateField = function<T extends ObjectShape>(id: string, value: string, validationSchema: ObjectSchema<T>): string {
+export const validateField = function<T extends ObjectShape>(id: string, value: string, validationSchema: ObjectSchema<T>): string {
     try {
         validationSchema.validateSyncAt(id, {[id]: value})    
         return  ''
@@ -106,6 +107,7 @@ const useFormValues = function<T extends ObjectShape>(initialValues: FieldsMap, 
         handleOnBlur,
         resetFormValues,
         onSubmit,
+        setFormValues,
     }
 }
 
