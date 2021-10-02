@@ -28,8 +28,10 @@ jobs:
       - name: Print Event
         env:
           EVENT: ${{ toJSON(github) }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           echo "EVENT: $EVENT"
+          echo "HEAD REF: $HEAD_REF"
 
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
@@ -38,7 +40,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TODO_APP_4104E }}'
           projectId: ${{ secrets.REACT_PROJECT_ID }}
-          channelId:
+          channelId: ${{ github.head_ref }}
 
       - name: Print deployment url
         env:
