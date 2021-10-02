@@ -24,9 +24,22 @@ jobs:
           REACT_APP_MEASUREMENT_ID: ${{ secrets.REACT_APP_MEASUREMENT_ID }}
           REACT_APP_BASE_URL: https://todo-app-4104e--pr1-development-l1vboljb.web.app
         run: npm run build
+        
+      - name: Print Event
+        run: |
+          echo "BASE REF: ${{ github.base_ref	 }}"
+
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
+        id: deployment
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TODO_APP_4104E }}'
           projectId: ${{ secrets.REACT_PROJECT_ID }}
+          channelId:
+
+      - name: Print deployment url
+        env:
+          URL: ${{ steps.deployment.outputs.url }}
+        run: |
+          echo "URL: $URL"

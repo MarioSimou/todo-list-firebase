@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "todo-app-4104e"
+  },
+  "targets": {
+    "todo-app-4104e": {
+      "hosting": {
+        "todo-list-dev": [
+          "todolist-c4398"
+        ]
+      }
+    }
   }
 }
