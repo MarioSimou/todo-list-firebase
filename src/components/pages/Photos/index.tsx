@@ -63,7 +63,7 @@ const Photos = () => {
     }, [uploadPhoto, formValues])
 
     return (
-        <VStack p="2rem" spacing="2rem">
+        <VStack p="2rem" spacing="2rem" maxW="1200px" m="0 auto">
             <Heading>Upload image</Heading>
             <Box as="form">
                 <FormControl id="image" isInvalid={Boolean(formValues.image.error && formValues.image.touched)}>
@@ -73,7 +73,7 @@ const Photos = () => {
                         title="image" 
                         fallbackSrc="https://blogs.oregonstate.edu/bhs323cjp/wp-content/themes/koji/assets/images/default-fallback-image.png"
                         objectFit="cover"
-                        h={400}
+                        h={[200,200,400,400]}
                         w="100%"/>
                     <ButtonGroup variant="solid" colorScheme="blue" flexDirection="column" w="100%" gridRowGap="0.5rem">
                         <Button onClick={onClickSelectImage} isFullWidth>Select Image</Button>

@@ -12,7 +12,7 @@ type FormValuesResult = {
     enableTouched: (name: string) => void
     resetFormValues: () => void
     setFormValues: React.Dispatch<SetStateAction<FieldsMap>>
-    onSubmit: (cb: (formValues: FieldsMap) => void) => Function
+    onSubmit: (cb: (formValues: FieldsMap) => void) => [Error | undefined, Function | undefined]
 } 
 
 export const validateField = function<T extends ObjectShape>(id: string, value: string, validationSchema: ObjectSchema<T>): string {
@@ -83,7 +83,7 @@ const useFormValues = function<T extends ObjectShape>(initialValues: FieldsMap, 
 
     const resetFormValues = React.useCallback(() => setFormValues(() => initialValues), [initialValues, setFormValues])
 
-    const onSubmit = React.useCallback((cb: (formValues: FieldsMap) => void): Function => {
+    const onSubmit = React.useCallback((cb: (formValues: FieldsMap) => void): [Error | undefined, Function | undefined] => {
         try {
             const values = Object.entries(formValues).reduce((fieldValues, [fieldName, {value}]) => ({
                 ...fieldValues,
@@ -91,10 +91,10 @@ const useFormValues = function<T extends ObjectShape>(initialValues: FieldsMap, 
             }),{})
 
             validationSchema.validateSync(values)
-            return () => cb(formValues)
+            return [undefined, () => cb(formValues)] 
         }catch(e){
             console.error(e.message)
-            return () => null
+            return [e, undefined]
         }
     }, [validationSchema, formValues])
 

@@ -5,6 +5,8 @@ import { HashRouter, Route } from 'react-router-dom'
 import Home from '../pages/Home'
 import Photos from '../pages/Photos'
 import Navbar from "../shared/Navbar"
+import SignIn from "../pages/SignIn"
+import { AuthProvider, AuthRoute } from '../../hooks/providers'
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -20,11 +22,18 @@ initializeApp(firebaseConfig, 'todo-list')
 
 const App = () => (
   <ChakraProvider theme={theme}>
-    <HashRouter>
-      <Navbar/>
-      <Route path="/home" component={Home} exact/>
-      <Route path="/photos" component={Photos} exact/>
-    </HashRouter>
+    <AuthProvider>
+      <HashRouter>
+        <Navbar/>
+        <AuthRoute path="/home" exact>
+          <Home/>
+        </AuthRoute>
+        <AuthRoute path="/photos" exact>
+          <Photos/>          
+        </AuthRoute>
+        <Route path="/sign-in" component={SignIn} exact/>
+      </HashRouter>
+    </AuthProvider>
   </ChakraProvider>
 )
 

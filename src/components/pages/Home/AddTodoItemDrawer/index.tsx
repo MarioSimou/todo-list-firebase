@@ -1,5 +1,5 @@
 import React from 'react'
-import { Textarea, VStack } from '@chakra-ui/react'
+import { Textarea, useToast, VStack } from '@chakra-ui/react'
 import Field from '../../../shared/Field'
 import { useFormValues } from '../../../../hooks'
 import * as yup from 'yup'
@@ -35,9 +35,14 @@ const AddTodoItemDrawer: React.FC<Props> = ({
             touched: false,
         },
      }, validationSchema)
+     const setNotification = useToast({
+         position: 'bottom-right',
+         isClosable: true,
+         variant: 'solid'
+     })
 
      const onSubmitTodoItem = React.useCallback(() => {
-         return onSubmit(async(formValues: FieldsMap) => {
+         const [e, cb] = onSubmit(async(formValues: FieldsMap) => {
              const todoItem: TodoItemT = {
                  id: uuid4(),
                  title: formValues.title.value,
@@ -47,8 +52,18 @@ const AddTodoItemDrawer: React.FC<Props> = ({
              
              resetFormValues()
              onClose()
-        })()
-     }, [onSubmit, resetFormValues, addItem, onClose])
+        })
+
+        if(e){
+            return setNotification({
+                title: 'Error',
+                description: e.message,
+                status: 'error'
+            })
+        }
+
+        return cb?.()
+     }, [onSubmit, resetFormValues, setNotification, addItem, onClose])
 
     return (
         <RightDrawer isOpen={isOpen}

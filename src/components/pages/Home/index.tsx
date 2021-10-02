@@ -33,7 +33,7 @@ const Home = () => {
             </Flex>
             <AddTodoItemDrawer isOpen={isAddTodoItemDrawerOpen} onClose={closeAddTodoItemDrawer} addItem={addItem}/>
             {selectedItem && <UpdateTodoItemDrawer isOpen={isUpdateTodoItemDrawerOpen} onClose={onCloseUpdateTodoItem} updateItem={updateItem} item={selectedItem}/>}
-            <VStack p="2rem" spacing="2rem">
+            <VStack p="2rem" spacing="2rem" maxW="1200px" m="0 auto">
                 <Heading>Todo Items List</Heading>
                 <TodoList items={items} deleteItem={deleteItem} updateItem={onClickUpdateTodoItem}/>
             </VStack>
