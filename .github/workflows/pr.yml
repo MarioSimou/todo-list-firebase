@@ -29,6 +29,7 @@ jobs:
         env:
           EVENT: ${{ toJSON(github) }}
           HEAD_REF: ${{ github.head_ref }}
+          CHANNEL_NAME: ${{ format('todo-list {0}', github.head_ref)}}
         run: |
           echo "EVENT: $EVENT"
           echo "HEAD REF: $HEAD_REF"
@@ -36,6 +37,8 @@ jobs:
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         id: deployment
+        env: 
+          CHANNEL_NAME: ${{ format('todo-list {0}', github.head_ref)}}
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TODO_APP_4104E }}'
