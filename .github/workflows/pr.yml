@@ -26,8 +26,10 @@ jobs:
         run: npm run build
         
       - name: Print Event
+        env:
+          EVENT: ${{ toJSON(github) }}
         run: |
-          echo "BASE REF: ${{ github.base_ref	 }}"
+          echo "EVENT: $EVENT"
 
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
@@ -40,6 +42,6 @@ jobs:
 
       - name: Print deployment url
         env:
-          URL: ${{ steps.deployment.outputs.url }}
+          URL: ${{ steps.deployment.outputs.details_url }}
         run: |
           echo "URL: $URL"
