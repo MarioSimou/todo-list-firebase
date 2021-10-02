@@ -13,12 +13,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Deploy name
-        env:
-          CHANNEL_NAME: ${{ format('todo-list-{0}', github.event.pull_request.head.ref)}}
-        run: |
-          echo "CHANNEL_NAME: $CHANNEL_NAME"
-
       - name: Build Application
         env: 
           REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
@@ -28,21 +22,12 @@ jobs:
           REACT_APP_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_MESSAGING_SENDER_ID }}
           REACT_APP_APP_ID: ${{ secrets.REACT_APP_APP_ID }}
           REACT_APP_MEASUREMENT_ID: ${{ secrets.REACT_APP_MEASUREMENT_ID }}
-          REACT_APP_BASE_URL: https://todo-app-4104e--pr1-development-l1vboljb.web.app
+          REACT_APP_BASE_URL: https://${{ secrets.REACT_APP_AUTH_DOMAIN }}
         run: npm run build
         
       - uses: FirebaseExtended/action-hosting-deploy@v0
         id: deployment
-        env: 
-          CHANNEL_NAME: ${{ format('todo-list-{0}', github.event.pull_request.head.ref)}}
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TODO_APP_4104E }}'
           projectId: ${{ secrets.REACT_PROJECT_ID }}
-          channelId: ${{ env.CHANNEL_NAME }}
-
-      - name: Print deployment url
-        env:
-          URL: ${{ steps.deployment.outputs.details_url }}
-        run: |
-          echo "URL: $URL"
