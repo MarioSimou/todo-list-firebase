@@ -29,8 +29,7 @@ const SendResetPassword = () => {
 
     const onSubmitSendResetPassword = React.useCallback(() => {
         const [e, cb] = onSubmit(async ({email}: FieldsMap) => {
-            const redirectTo = `${process.env.REACT_APP_BASE_URL as string}/sign-in`
-            const [e] = await resetPassword(email.value, redirectTo)
+            const [e] = await resetPassword(email.value)
             if(e){
                 return setErrorNotification({description: e.message})
             }

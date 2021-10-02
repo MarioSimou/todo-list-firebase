@@ -42,9 +42,9 @@ export const useAuth = () => {
         }
     }, [auth, setUser])
 
-    const resetPassword = React.useCallback(async (email: string, redirectTo: string): Promise<[Error | undefined]> => {
+    const resetPassword = React.useCallback(async (email: string): Promise<[Error | undefined]> => {
         try {
-            await sendPasswordResetEmail(auth, email, {url: redirectTo})
+            await sendPasswordResetEmail(auth, email)
             return [undefined]
         }catch(e){
             return [e]
