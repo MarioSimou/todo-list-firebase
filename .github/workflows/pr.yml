@@ -13,6 +13,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Deploy name
+        env:
+          CHANNEL_NAME: ${{ format('todo-list {0}', github.head_ref)}}
+        run: echo "CHANNEL_NAME: $CHANNEL_NAME"
+
       - name: Build Application
         env: 
           REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
@@ -25,16 +30,6 @@ jobs:
           REACT_APP_BASE_URL: https://todo-app-4104e--pr1-development-l1vboljb.web.app
         run: npm run build
         
-      - name: Print Event
-        env:
-          EVENT: ${{ toJSON(github) }}
-          HEAD_REF: ${{ github.head_ref }}
-          CHANNEL_NAME: ${{ format('todo-list {0}', github.head_ref)}}
-        run: |
-          echo "EVENT: $EVENT"
-          echo "HEAD REF: $HEAD_REF"
-
-
       - uses: FirebaseExtended/action-hosting-deploy@v0
         id: deployment
         env: 
@@ -43,7 +38,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TODO_APP_4104E }}'
           projectId: ${{ secrets.REACT_PROJECT_ID }}
-          channelId: ${{ github.head_ref }}
+          channelId: ${{ env.CHANNEL_NAME }}
 
       - name: Print deployment url
         env:
