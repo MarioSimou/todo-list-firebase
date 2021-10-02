@@ -1,12 +1,15 @@
 import * as React from "react"
 import { ChakraProvider, theme } from "@chakra-ui/react"
 import { FirebaseOptions, initializeApp } from 'firebase/app'
-import { HashRouter, Route } from 'react-router-dom'
+import { Redirect, Route, Router, Switch, } from 'react-router-dom'
 import Home from '../pages/Home'
 import Photos from '../pages/Photos'
 import Navbar from "../shared/Navbar"
 import SignIn from "../pages/SignIn"
+import SignUp from "../pages/SignUp"
 import { AuthProvider, AuthRoute } from '../../hooks/providers'
+import SendResetPassword from "../pages/SendResetPassword"
+import {createBrowserHistory} from 'history'
 
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -20,19 +23,28 @@ const firebaseConfig: FirebaseOptions = {
 
 initializeApp(firebaseConfig, 'todo-list')
 
+const history = createBrowserHistory()
+
 const App = () => (
   <ChakraProvider theme={theme}>
     <AuthProvider>
-      <HashRouter>
+      <Router history={history} >
         <Navbar/>
-        <AuthRoute path="/home" exact>
-          <Home/>
-        </AuthRoute>
-        <AuthRoute path="/photos" exact>
-          <Photos/>          
-        </AuthRoute>
-        <Route path="/sign-in" component={SignIn} exact/>
-      </HashRouter>
+        <Switch>
+          <Route path="/sign-in" component={SignIn} exact/>
+          <Route path="/sign-up" component={SignUp} exact/>
+          <Route path="/send-reset-password" component={SendResetPassword} exact/>
+          <AuthRoute path="/" exact>
+            <Home/>
+          </AuthRoute>
+          <AuthRoute path="/photos" exact>
+            <Photos/>          
+          </AuthRoute>
+          <Route path="*">
+            <Redirect to="/"/>
+          </Route>
+        </Switch>
+      </Router>
     </AuthProvider>
   </ChakraProvider>
 )

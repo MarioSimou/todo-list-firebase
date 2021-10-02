@@ -1,5 +1,5 @@
 import React from 'react'
-import { Textarea, VStack } from '@chakra-ui/react'
+import { Textarea, useToast, VStack } from '@chakra-ui/react'
 import Field from '../../../shared/Field'
 import { useFormValues } from '../../../../hooks'
 import * as yup from 'yup'
@@ -36,9 +36,15 @@ const UpdateTodoItemDrawer: React.FC<Props> = ({
             touched: false,
         },
      }, validationSchema)
+     const setErrorNotification = useToast({
+         status: 'error',
+         title: 'Update todo item',
+         position: 'bottom-right',
+         isClosable: true,
+     })
 
      const onSubmitTodoItem = React.useCallback(() => {
-         return onSubmit(async(formValues: FieldsMap) => {
+         const [e, cb] = onSubmit(async(formValues: FieldsMap) => {
              const todoItem: TodoItemT = {
                  ...item,
                  title: formValues.title.value,
@@ -48,8 +54,13 @@ const UpdateTodoItemDrawer: React.FC<Props> = ({
              
              resetFormValues()
              onClose()
-        })()
-     }, [onSubmit, resetFormValues, updateItem, onClose, item])
+        })
+        
+        if(e){
+            return setErrorNotification({description: e.message})
+        }
+        return cb?.()
+     }, [onSubmit, resetFormValues, updateItem, onClose, item, setErrorNotification])
 
      const onCloseCallback = React.useCallback(() => {
         resetFormValues()

@@ -4,6 +4,7 @@ import {useFormValues,validateField, usePhotos} from '../../../hooks'
 import PhotoList from './PhotosList'
 import * as yup from 'yup'
 import {v4 as uuid4} from 'uuid'
+import { ImageT } from '../../../types'
 
 const validationSchema = yup.object().shape({
     image: yup.string().required().test('image', "This isn't is valid iamge", (value) => /data:image\/\w+;base64,.+/.test(value as string))
@@ -56,10 +57,10 @@ const Photos = () => {
         }
     }, [enableTouched, setError, setValue])
 
-    const onClickUploadImage = React.useCallback(async () => {
+    const onClickUploadImage = React.useCallback(async (): Promise<ImageT> => {
         const id = uuid4()
         const image = await uploadPhoto(id,formValues.image.value)
-        console.log(image)
+        return image
     }, [uploadPhoto, formValues])
 
     return (

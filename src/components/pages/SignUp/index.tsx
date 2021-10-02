@@ -1,31 +1,29 @@
 import React from 'react'
-import { Flex, Button, ButtonGroup, VStack, Heading, useToast } from '@chakra-ui/react'
+import {  Flex, VStack, Heading, Button, ButtonGroup, useToast } from '@chakra-ui/react'
 import Field from '../../shared/Field'
-import Link from '../../shared/Link'
-import { useFormValues, useAuth, useHistory } from '../../../hooks'
+import { useAuth, useFormValues, useHistory } from '../../../hooks'
 import * as yup from 'yup'
-import { FieldsMap } from '../../../types'
 
 const validationSchema = yup.object().shape({
     email: yup.string().required().email(),
     password: yup.string().required().test('password', 'Invalid password',(password) => /\w{8,}/.test(password as string))
 })
 
-const SignIn = () => {
+const SignUp = () => {
+    const {signUp} = useAuth()
     const router = useHistory()
-    const {signIn} = useAuth()
     const {formValues, handleOnBlur, handleOnChange, onSubmit} = useFormValues({
         email: {
             touched: false,
             error: '',
-            value: ''
+            value: '',
         },
         password: {
             touched: false,
             error: '',
-            value: ''
-        }
-    }, validationSchema) 
+            value: '',
+        },
+    }, validationSchema)
     const setErrorNotification = useToast({
         position: 'bottom-right',
         isClosable: true,
@@ -33,33 +31,32 @@ const SignIn = () => {
         status: 'error',
         title: 'Error',
     })
-    const signUpUrl = `/sign-up${router.location.search}`
 
-    const onSubmitSignIn = React.useCallback(() => {
-        const [e, cb] = onSubmit(async (formValues: FieldsMap) => {
-            const {email, password} = formValues 
+    const onSubmitSignUp = React.useCallback(async () => {
+        const [e, cb] = onSubmit(async (formValues) => {
+            const {email, password} = formValues
+            const [e] = await signUp(email.value, password.value)
 
-            const [e] = await signIn(email.value, password.value)
             if(e){
                 return setErrorNotification({description: e.message})
             }
-            const to = new URLSearchParams(router.location.search).get('redirectTo') ?? '/'
+            const searchParams = new URLSearchParams(router.location.search)
+            const to = searchParams.get('redirectTo') ?? '/'
             return router.push(to)
         })
 
         if(e){
             return setErrorNotification({
-                description: e.message,
+                description: e.message
             })
         }
-
         return cb?.()
-    }, [onSubmit, setErrorNotification, signIn, router])
+    }, [setErrorNotification, signUp, onSubmit, router])
 
     return (
         <Flex p="2rem" w="100%" alignItems="center" justifyContent="center" minH="calc(100vh - 62px)">
             <VStack spacing="1rem" maxW="600px" alignSelf="center" w="100%" bg="blackAlpha.300" p="2rem" as="form">
-                <Heading>Sign In</Heading>
+                <Heading>Sign Up</Heading>
                 <Field id="email"
                     label="Email"
                     error={formValues.email.error}
@@ -80,16 +77,14 @@ const SignIn = () => {
                     onBlur={handleOnBlur}
                     InputProps={{
                         type: 'password',
-                }}
+                    }}
                     required/>
-                <ButtonGroup variant="solid" colorScheme="blue" w="100%" display="flex" flexDirection="column">
-                    <Button onClick={onSubmitSignIn} isFullWidth>Sign In</Button>
-                    <Link to={signUpUrl} color="blue.500" mt="1rem" alignSelf="flex-end" fontSize="1rem">Haven't registered yet?</Link>
-                    <Link to="/send-reset-password" color="blue.500" mt="1rem" alignSelf="flex-end" fontSize="1rem">Don't know my password</Link>
+                <ButtonGroup colorScheme="blue" w="100%">
+                    <Button onClick={onSubmitSignUp} isFullWidth>Sign Up</Button>
                 </ButtonGroup>
             </VStack>
         </Flex>
     )
 }
 
-export default SignIn
+export default SignUp

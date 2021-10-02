@@ -1,6 +1,6 @@
 import React from 'react'
 import { User } from 'firebase/auth'
-import { signInWithEmailAndPassword, getAuth, signOut as signOutFirebase } from 'firebase/auth'
+import { signInWithEmailAndPassword, getAuth, signOut as signOutFirebase, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { getApp } from 'firebase/app'
 import { Route, Redirect, RouteProps} from 'react-router-dom'
 
@@ -32,11 +32,32 @@ export const useAuth = () => {
         return resetUser()
     }, [auth, resetUser])
 
+    const signUp = React.useCallback(async (email: string, password: string): Promise<[Error | undefined, User | undefined ]> => {
+        try {
+            const {user} = await createUserWithEmailAndPassword(auth, email, password)
+            setUser(user)
+            return [undefined, user]    
+        }catch(e){
+            return [e, undefined]
+        }
+    }, [auth, setUser])
+
+    const resetPassword = React.useCallback(async (email: string, redirectTo: string): Promise<[Error | undefined]> => {
+        try {
+            await sendPasswordResetEmail(auth, email, {url: redirectTo})
+            return [undefined]
+        }catch(e){
+            return [e]
+        }
+    }, [auth])
+
     return {
         user,
         setUser,
         signIn,
         signOut,
+        signUp,
+        resetPassword,
     }
 }
 
